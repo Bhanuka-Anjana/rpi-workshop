@@ -1,21 +1,12 @@
 # Vision Module - Camera & Object Detection Guide
 
-This guide will help beginners set up camera functionality and YOLO object detection on Raspberry Pi.
+This guide will help you to set up camera functionality and YOLO object detection on a Raspberry Pi 4b.
 
 ## 📷 Camera Connection Methods
 
-### 1. CSI Camera Interface (Recommended)
-- **What we're using**: CSI (Camera Serial Interface) connection
-- **Advantages**: 
-  - Higher performance and lower latency
-  - Direct hardware integration with Raspberry Pi
-  - Better frame rates and image quality
-  - Lower CPU usage compared to USB cameras
-
+### 1. CSI Camera Interface 
+- **What we're using here today**: CSI (Camera Serial Interface) connection
 ### 2. Alternative: USB Web Camera
-- Connect any USB webcam to Raspberry Pi USB ports
-- Generally slower than CSI but more flexible
-- Plug-and-play compatibility with most USB cameras
 
 ---
 
@@ -24,22 +15,19 @@ This guide will help beginners set up camera functionality and YOLO object detec
 ### Step 1: Create Virtual Environment
 ```bash
 # Navigate to the vision directory
-cd /home/bhanu/Desktop/test/vision
+cd /home/{user name}/..{your location}
 
 # Create a new virtual environment
-python3 -m venv venv_vision
-
-# Alternative method using virtualenv
-# sudo apt install python3-virtualenv
-# virtualenv venv_vision
+sudo apt install -y python3-full python3-venv
+python3 -m venv ~/yolo-env
 ```
 
 ### Step 2: Activate Virtual Environment
 ```bash
 # Activate the environment
-source venv_vision/bin/activate
+source ~/yolo-env/bin/activate
 
-# You should see (venv_vision) in your terminal prompt
+# You should see (yolo-env) in your terminal prompt
 ```
 
 ### Step 3: Deactivate Virtual Environment
@@ -55,7 +43,7 @@ deactivate
 ### Essential Packages
 ```bash
 # Make sure virtual environment is activated
-source venv_vision/bin/activate
+source ~/yolo-env/bin/activate
 
 # Update pip first
 pip install --upgrade pip
@@ -67,21 +55,12 @@ pip install numpy
 pip install pillow
 
 # YOLO and AI packages
-pip install ultralytics
-pip install torch torchvision
+pip install ultralytics[export]
+# Then restart rpi
+sudo reboot
 
-# Additional utilities
-pip install threading-utils
 ```
 
-### System Dependencies (if needed)
-```bash
-# Install system packages (outside virtual environment)
-sudo apt update
-sudo apt install python3-dev python3-pip
-sudo apt install libcamera-apps
-sudo apt install python3-opencv
-```
 
 ---
 
@@ -90,18 +69,13 @@ sudo apt install python3-opencv
 ### Step 1: Test Camera Connection
 ```bash
 # Activate virtual environment
-source venv_vision/bin/activate
+source ~/yolo-env/bin/activate
 
 # Test basic camera preview
 python3 cam_preview.py
 ```
 
 **Expected Result**: You should see a live camera preview window. Press `Ctrl+C` to exit.
-
-**Troubleshooting**:
-- If camera not detected: Check CSI cable connection
-- If permission error: Add user to video group: `sudo usermod -a -G video $USER`
-- Reboot if needed: `sudo reboot`
 
 ### Step 2: Run Basic YOLO Detection
 ```bash
@@ -188,66 +162,10 @@ SMOOTHING_FACTOR = 0.8 # Detection smoothing (0-1)
 
 ---
 
-## 🐛 Common Issues & Solutions
-
-### Camera Issues:
-```bash
-# Check camera status
-vcgencmd get_camera
-
-# Enable camera interface
-sudo raspi-config
-# Navigate to Interface Options > Camera > Enable
-```
-
-### Performance Issues:
-- **Low FPS**: Increase `FRAME_SKIP` or reduce `IMG_SIZE`
-- **High CPU Usage**: Enable GPU memory split: `sudo raspi-config` > Advanced > Memory Split > 128
-- **Memory Errors**: Reduce `BUFFER_SIZE` in fast version
-
-### Package Issues:
-```bash
-# If ultralytics installation fails
-pip install --upgrade setuptools wheel
-pip install ultralytics --no-deps
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-```
-
----
-
 ## 📚 Additional Resources
 
 - **Ultralytics Raspberry Pi Guide**: https://docs.ultralytics.com/guides/raspberry-pi/#set-up-ultralytics
 - **Picamera2 Documentation**: https://datasheets.raspberrypi.com/camera/picamera2-manual.pdf
 - **YOLO Model Zoo**: https://github.com/ultralytics/ultralytics
-
----
-
-## 🎯 Quick Start Summary
-
-1. **Setup Environment**:
-   ```bash
-   python3 -m venv venv_vision
-   source venv_vision/bin/activate
-   pip install picamera2 ultralytics opencv-python
-   ```
-
-2. **Test Camera**:
-   ```bash
-   python3 cam_preview.py
-   ```
-
-3. **Run Detection**:
-   ```bash
-   # Standard version
-   python3 yolo_prediction.py
-   
-   # Fast optimized version
-   python3 yolo_prediction_fast.py
-   ```
-
-4. **For Best Performance**: Use `yolo_prediction_fast.py` with NCNN optimization
-
----
 
 *Happy coding! 🚀 For questions or issues, refer to the troubleshooting section above.*
