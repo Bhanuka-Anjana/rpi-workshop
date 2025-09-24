@@ -1,0 +1,14 @@
+[Unit]
+Description=Blink LED on GPIO18
+After=multi-user.target
+
+[Service]
+Type=simple
+User=bhanu
+WorkingDirectory=/home/bhanu/Desktop/test
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /home/bhanu/Desktop/test/led_blink_rpigpio.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
